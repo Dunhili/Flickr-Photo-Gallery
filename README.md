@@ -11,4 +11,7 @@ TO DO:
   - Add better tablet support
   - Allow users to search by flickr users
     - display content from a user
+  - Autocomplete for searching
+  
+Flickr API Link: https://www.flickr.com/services/api/
   
