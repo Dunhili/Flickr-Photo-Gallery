@@ -26,6 +26,7 @@ public class FlickrFetchr {
     private static final String METHOD_SEARCH = "flickr.photos.search";
     private static final String PARAM_EXTRAS = "extras";
     private static final String PARAM_TEXT = "text";
+    private static final String PAGE = "page";
 
     private static final String EXTRA_SMALL_URL = "url_s";
 
@@ -63,7 +64,6 @@ public class FlickrFetchr {
         ArrayList<GalleryItem> items = new ArrayList<GalleryItem>();
         
         try {
-            
             String xmlString = getUrl(url);
             Log.i(TAG, "Received xml: " + xmlString);
             XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
@@ -79,10 +79,11 @@ public class FlickrFetchr {
         return items;
     }
     
-    public ArrayList<GalleryItem> fetchItems() {
+    public ArrayList<GalleryItem> fetchItems(int page) {
     	String url = Uri.parse(ENDPOINT).buildUpon()
                 .appendQueryParameter("method", METHOD_GET_RECENT)
                 .appendQueryParameter("api_key", API_KEY)
+                .appendQueryParameter(PAGE, "" + page)
                 .appendQueryParameter(PARAM_EXTRAS, EXTRA_SMALL_URL)
                 .build().toString();
     	return downloadGalleryItems(url);
@@ -98,7 +99,8 @@ public class FlickrFetchr {
     	return downloadGalleryItems(url);
     }
     
-    /* package */ void parseItems(ArrayList<GalleryItem> items, XmlPullParser parser) throws XmlPullParserException, IOException {
+    /* package */ void parseItems(ArrayList<GalleryItem> items, XmlPullParser parser) 
+    		throws XmlPullParserException, IOException {
         int eventType = parser.next();
 
         while (eventType != XmlPullParser.END_DOCUMENT) {

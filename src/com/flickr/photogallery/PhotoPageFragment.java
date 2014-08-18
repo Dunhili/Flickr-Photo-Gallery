@@ -1,6 +1,7 @@
 package com.flickr.photogallery;
 
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +20,10 @@ public class PhotoPageFragment extends VisibleFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        ActionBar titleBar = getActivity().getActionBar();
+        if (titleBar.isShowing()) {
+        	titleBar.hide();
+        }
 
         mUrl = getActivity().getIntent().getData().toString();
     }

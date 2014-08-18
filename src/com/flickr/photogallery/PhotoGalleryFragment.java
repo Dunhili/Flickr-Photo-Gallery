@@ -3,6 +3,7 @@ package com.flickr.photogallery;
 import java.util.ArrayList;
 
 import android.annotation.TargetApi;
+import android.app.ActionBar;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.app.SearchableInfo;
@@ -24,13 +25,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.SearchView;
-
-import com.flickr.photogallery.R;
 
 public class PhotoGalleryFragment extends VisibleFragment {
 	private static final String TAG = "PhotoGalleryFragment";
@@ -45,6 +44,10 @@ public class PhotoGalleryFragment extends VisibleFragment {
         
         setRetainInstance(true);
         setHasOptionsMenu(true);
+        ActionBar titleBar = getActivity().getActionBar();
+        if (!titleBar.isShowing()) {
+        	titleBar.show();
+        }
         updateItems();
         
         mThumbnailThread = new ThumbnailDownloader<ImageView>(new Handler());
@@ -176,7 +179,7 @@ public class PhotoGalleryFragment extends VisibleFragment {
         	if (query != null) {
         		return new FlickrFetchr().search(query);
         	} else {
-        		return new FlickrFetchr().fetchItems();
+        		return new FlickrFetchr().fetchItems(1);
         	}
         }
 
