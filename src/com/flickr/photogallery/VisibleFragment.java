@@ -8,7 +8,15 @@ import android.content.IntentFilter;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 
+/**
+ * Represents a fragment that is seen by the user.
+ * @author dunhili
+ */
 public abstract class VisibleFragment extends Fragment {
+    ////////////////////////////////////////////////////////////////////
+    // Fields
+    ////////////////////////////////////////////////////////////////////
+	
 	public static final String TAG = "VisibleFragment";
 	
 	private BroadcastReceiver mOnShowNotification = new BroadcastReceiver() {
@@ -20,6 +28,13 @@ public abstract class VisibleFragment extends Fragment {
 		}
 	};
 	
+    ////////////////////////////////////////////////////////////////////
+    // Public Methods
+    ////////////////////////////////////////////////////////////////////
+	
+	/**
+	 * When the fragment is resumed, registers the notification receiver.
+	 */
 	@Override
 	public void onResume() {
 		super.onResume();
@@ -27,6 +42,9 @@ public abstract class VisibleFragment extends Fragment {
 		getActivity().registerReceiver(mOnShowNotification, filter, PollService.PERM_PRIVATE, null);
 	}
 	
+	/**
+	 * When the fragment is paused, stops the notification receiver.
+	 */
 	@Override
 	public void onPause() {
 		super.onPause();

@@ -12,10 +12,26 @@ import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+/**
+ * Fragment that handles creating the web page within the app.
+ * @author dunhili
+ */
 public class PhotoPageFragment extends VisibleFragment {
+    ////////////////////////////////////////////////////////////////////
+    // Fields
+    ////////////////////////////////////////////////////////////////////
+	
     private String mUrl;
     private WebView mWebView;
 
+    ////////////////////////////////////////////////////////////////////
+    // Public Methods
+    ////////////////////////////////////////////////////////////////////
+    
+    /**
+     * Called when the fragment is created.
+     * @param savedInstanceState bundle that contains stored information
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,6 +44,12 @@ public class PhotoPageFragment extends VisibleFragment {
         mUrl = getActivity().getIntent().getData().toString();
     }
 
+    /**
+     * Called when the view is created. Displays the web page and progress bar.
+     * @param inflater inflater for the view
+     * @param parent view group that the fragment is part of
+     * @param savedInstanceState bundle that contains any stored information
+     */
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstanceState) {

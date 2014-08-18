@@ -31,13 +31,29 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.SearchView;
 
+/**
+ * 
+ * @author dunhili
+ */
 public class PhotoGalleryFragment extends VisibleFragment {
+    ////////////////////////////////////////////////////////////////////
+    // Fields
+    ////////////////////////////////////////////////////////////////////
+	
 	private static final String TAG = "PhotoGalleryFragment";
 	
     private GridView mGridView;
-    private ArrayList<GalleryItem> mItems;
+    private ArrayList<Photo> mItems;
     private ThumbnailDownloader<ImageView> mThumbnailThread;
 
+    ////////////////////////////////////////////////////////////////////
+    // Public Methods
+    ////////////////////////////////////////////////////////////////////
+    
+    /**
+     * Called when the fragment is created.
+     * @param savedInstanceState contains information passed from other fragments
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +79,11 @@ public class PhotoGalleryFragment extends VisibleFragment {
         Log.i(TAG, "Background thread started.");
     }
     
+    /**
+     * Called when the options menu is created.
+     * @param menu menu that is created
+     * @param inflater inflates the menu to expand the parts of the menu
+     */
     @TargetApi(11)
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
@@ -83,6 +104,10 @@ public class PhotoGalleryFragment extends VisibleFragment {
     	}
     }
     
+    /**
+     * Called when a menu item is selected
+     * @param item item that was selected
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
     	switch (item.getItemId()) {
@@ -108,6 +133,10 @@ public class PhotoGalleryFragment extends VisibleFragment {
     	}
     }
     
+    /**
+     * Called when the options menu is created.
+     * @param menu menu that is prepared
+     */
     @Override
     public void onPrepareOptionsMenu(Menu menu) {
     	super.onPrepareOptionsMenu(menu);
@@ -117,6 +146,12 @@ public class PhotoGalleryFragment extends VisibleFragment {
     			? R.string.stop_polling : R.string.start_polling);
     }
 
+    /**
+     * Called when the view is created.
+     * @param inflater inflater for the view
+     * @param container view group that the view is contained within
+     * @param savedInstanceState bundle from other fragments
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
@@ -128,7 +163,7 @@ public class PhotoGalleryFragment extends VisibleFragment {
         mGridView.setOnItemClickListener(new OnItemClickListener() {
         	@Override
         	public void onItemClick(AdapterView<?> gridView, View view, int pos, long id) {
-        		GalleryItem item = mItems.get(pos);
+        		Photo item = mItems.get(pos);
         		Uri photoPageUri = Uri.parse(item.getPhotoPageUrl());
         		Intent intent = new Intent(getActivity(), PhotoPageActivity.class);
         		intent.setData(photoPageUri);
@@ -139,6 +174,9 @@ public class PhotoGalleryFragment extends VisibleFragment {
         return view;
     }
     
+    /**
+     * Called when the fragment is destroyed.
+     */
     @Override
     public void onDestroy() {
     	super.onDestroy();
@@ -146,16 +184,29 @@ public class PhotoGalleryFragment extends VisibleFragment {
     	Log.i(TAG, "Background thread destroyed.");
     }
     
+    /**
+     * Called when the view is destroyed.
+     */
     @Override
     public void onDestroyView() {
     	super.onDestroyView();
     	mThumbnailThread.clearQueue();
     }
     
+    /**
+     * Executes the thread that handles fetching the items.
+     */
     public void updateItems() {
     	new FetchItemsTask().execute();
     }
     
+    ////////////////////////////////////////////////////////////////////
+    // Package Methods
+    ////////////////////////////////////////////////////////////////////
+    
+    /**
+     * Sets up the adapter for the grid view.
+     */
     /* package */ void setupAdapter() {
         if (getActivity() == null || mGridView == null) return;
         
@@ -166,12 +217,20 @@ public class PhotoGalleryFragment extends VisibleFragment {
         }
     }
 
-    private class FetchItemsTask extends AsyncTask<Void,Void,ArrayList<GalleryItem>> {
+    ////////////////////////////////////////////////////////////////////
+    // Inner Classes
+    ////////////////////////////////////////////////////////////////////
+    
+    /**
+     * Inner class for an AsyncTask that handles the Flickr API calls.
+     * @author dunhili
+     */
+    private class FetchItemsTask extends AsyncTask<Void,Void,ArrayList<Photo>> {
         @Override
-        protected ArrayList<GalleryItem> doInBackground(Void... params) {
+        protected ArrayList<Photo> doInBackground(Void... params) {
         	Activity activity = getActivity();
         	if (activity == null) {
-        		return new ArrayList<GalleryItem>();
+        		return new ArrayList<Photo>();
         	}
         	
         	String query = PreferenceManager.getDefaultSharedPreferences(activity)
@@ -179,19 +238,23 @@ public class PhotoGalleryFragment extends VisibleFragment {
         	if (query != null) {
         		return new FlickrFetchr().search(query);
         	} else {
-        		return new FlickrFetchr().fetchItems(1);
+        		return new FlickrFetchr().getRecentPhotos(1);
         	}
         }
 
         @Override
-        protected void onPostExecute(ArrayList<GalleryItem> items) {
+        protected void onPostExecute(ArrayList<Photo> items) {
             mItems = items;
             setupAdapter();
         }
     }
     
-    private class GalleryItemAdapter extends ArrayAdapter<GalleryItem> {
-    	public GalleryItemAdapter(ArrayList<GalleryItem> items) {
+    /**
+     * Inner class for the adapter for the thumbnail.
+     * @author dunhili
+     */
+    private class GalleryItemAdapter extends ArrayAdapter<Photo> {
+    	public GalleryItemAdapter(ArrayList<Photo> items) {
     		super(getActivity(), 0, items);
     	}
     	
@@ -203,7 +266,7 @@ public class PhotoGalleryFragment extends VisibleFragment {
     		
     		ImageView imageView = (ImageView) convertView.findViewById(R.id.gallery_item_imageView);
     		imageView.setImageResource(R.drawable.blank);
-    		GalleryItem item = getItem(position);
+    		Photo item = getItem(position);
     		mThumbnailThread.queueThumbnail(imageView, item.getUrl());
     		return convertView;
     	}

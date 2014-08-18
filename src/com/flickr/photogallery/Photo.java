@@ -1,38 +1,60 @@
 package com.flickr.photogallery;
 
+/**
+ * Model for the photo, contains information about the owner, url, id, and caption.
+ * @author dunhili
+ */
 public class Photo {
+    ////////////////////////////////////////////////////////////////////
+    // Fields
+    ////////////////////////////////////////////////////////////////////
+	
     private String mCaption;
     private String mId;
     private String mUrl;
     private String mOwner;
 
-    public String getOwner() {
-		return mOwner;
-	}
-	public void setOwner(String owner) {
-		mOwner = owner;
-	}
+    ////////////////////////////////////////////////////////////////////
+    // Getters and Setters
+    ////////////////////////////////////////////////////////////////////
+    
 	public String getCaption() {
         return mCaption;
     }
-    public void setCaption(String caption) {
-        mCaption = caption;
-    }
+    
     public String getId() {
         return mId;
-    }
-    public void setId(String id) {
-        mId = id;
     }
     
     public String getUrl() {
         return mUrl;
     }
+    
+    public String getOwner() {
+		return mOwner;
+	}
 
+	
+    public void setCaption(String caption) {
+        mCaption = caption;
+    }
+
+    public void setId(String id) {
+        mId = id;
+    }
+    
     public void setUrl(String url) {
         mUrl = url;
     }
     
+	public void setOwner(String owner) {
+		mOwner = owner;
+	}
+    
+    ////////////////////////////////////////////////////////////////////
+    // Public Methods
+    ////////////////////////////////////////////////////////////////////
+	
     public String getPhotoPageUrl() {
     	return "http://www.flickr.com/photos/" + mOwner + "/" + mId;
     }

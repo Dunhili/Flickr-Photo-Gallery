@@ -16,17 +16,40 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+/**
+ * Intent service that handles the alarm for the notifications.
+ * @author dunhili
+ */
 public class PollService extends IntentService {
+    ////////////////////////////////////////////////////////////////////
+    // Fields
+    ////////////////////////////////////////////////////////////////////
+	
 	private static final String TAG = "PollService";
 	private static final int POLL_INTERVAL = 1000 * 60 * 5; // 5 minutes
 	public static final String PREF_IS_ALARM_ON = "isAlarmOn";
 	public static final String ACTION_SHOW_NOTIFICATION = "com.flickr.photogallery.SHOW_NOTIFICATION";
 	public static final String PERM_PRIVATE = "com.flickr.photogallery.PRIVATE";
 	
+    ////////////////////////////////////////////////////////////////////
+    // Constructors
+    ////////////////////////////////////////////////////////////////////
+	/**
+	 * Default constructor.
+	 */
 	public PollService() {
 		super(TAG);
 	}
 	
+    ////////////////////////////////////////////////////////////////////
+    // Public Methods
+    ////////////////////////////////////////////////////////////////////
+	
+	/**
+	 * Sets or cancels the service alarm for the notifications.
+	 * @param context context that contains the alarm
+	 * @param isOn should the alarm keep going or stop
+	 */
 	public static void setServiceAlarm(Context context, boolean isOn) {
 		Intent intent = new Intent(context, PollService.class);
 		PendingIntent pi = PendingIntent.getService(context, 0, intent, 0);
@@ -43,12 +66,25 @@ public class PollService extends IntentService {
 			.edit().putBoolean(PollService.PREF_IS_ALARM_ON, isOn).commit();
 	}
 	
+	/**
+	 * Returns true if the alarm is currently on, false otherwise
+	 * @param context context that contains the alarm
+	 * @return true if the alarm is on, false otherwise
+	 */
 	public static boolean isServiceAlarmOn(Context context) {
 		Intent intent = new Intent(context, PollService.class);
 		PendingIntent pi = PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_NO_CREATE);
 		return pi != null;
 	}
 	
+    ////////////////////////////////////////////////////////////////////
+    // Protected Methods
+    ////////////////////////////////////////////////////////////////////
+	
+	/**
+	 * Called when an intent is sent, handles creating and showing the notification.
+	 * @param intent intent sent to the poll service
+	 */
 	@Override
 	protected void onHandleIntent(Intent intent) {
 		ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -62,11 +98,11 @@ public class PollService extends IntentService {
 		String query = prefs.getString(FlickrFetchr.PREF_SEARCH_QUERY, null);
 		String lastResultId = prefs.getString(FlickrFetchr.PREF_LAST_RESULT_ID, null);
 		
-		ArrayList<GalleryItem> items;
+		ArrayList<Photo> items;
 		if (query != null) {
 			items = new FlickrFetchr().search(query);
 		} else {
-			items = new FlickrFetchr().fetchItems(1);
+			items = new FlickrFetchr().getRecentPhotos(1);
 		}
 		
 		if (items.isEmpty()) {
@@ -96,6 +132,15 @@ public class PollService extends IntentService {
 		Log.i(TAG, "Received an intent: " + intent);
 	}
 	
+    ////////////////////////////////////////////////////////////////////
+    // Package Methods
+    ////////////////////////////////////////////////////////////////////
+	
+	/**
+	 * Shows the notification.
+	 * @param requestCode code for the ordered broadcast
+	 * @param notification notification that should be shown
+	 */
 	/* package */ void showBackgroundNotification(int requestCode, Notification notification) {
 		Intent intent = new Intent(ACTION_SHOW_NOTIFICATION);
 		intent.putExtra("REQUEST_CODE", requestCode);
