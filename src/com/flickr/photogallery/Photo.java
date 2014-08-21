@@ -12,7 +12,7 @@ public class Photo {
     private String mCaption;
     private String mId;
     private String mUrl;
-    private String mOwner;
+    private Member mOwner;
 
     ////////////////////////////////////////////////////////////////////
     // Getters and Setters
@@ -30,11 +30,10 @@ public class Photo {
         return mUrl;
     }
     
-    public String getOwner() {
+    public Member getOwner() {
 		return mOwner;
 	}
 
-	
     public void setCaption(String caption) {
         mCaption = caption;
     }
@@ -47,7 +46,7 @@ public class Photo {
         mUrl = url;
     }
     
-	public void setOwner(String owner) {
+	public void setOwner(Member owner) {
 		mOwner = owner;
 	}
     
